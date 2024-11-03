@@ -1,0 +1,74 @@
+import streamlit as st
+import requests
+import pandas as pd
+from utils import fetch_topics, LANGUAGE_LIST
+
+# APIのベースURL
+BASE_URL = "https://birdxplorer.onrender.com/api/v1/data/notes"
+
+# Streamlitアプリ
+st.title("Community Notes Viewer")
+
+topics = fetch_topics()
+
+# APIパラメータの入力
+offset = st.number_input("Offset", min_value=0, value=0, step=1)
+limit = st.number_input("Limit", min_value=1, max_value=1000, value=5, step=1)
+language = st.selectbox("Language", LANGUAGE_LIST)
+
+# 追加のクエリパラメータ（任意）
+note_ids = st.text_area("Note IDs (comma separated)", placeholder="1846124913612226626,1846257106212815006")
+created_at_from = st.text_input("Created At From (UNIX EPOCH TIME in ms)",placeholder="1730638628907")
+created_at_to = st.text_input("Created At To (UNIX EPOCH TIME in ms)",placeholder="1730638628907")
+topic_ids = st.multiselect("Topic IDs", list(topics.keys()))
+post_ids = st.text_input("Post IDs (comma separated)", placeholder="1846124913612226626,1846257106212815006")
+current_status = st.multiselect(
+    "Current Status",
+    options=["NEEDS_MORE_RATINGS", "CURRENTLY_RATED_HELPFUL", "CURRENTLY_RATED_NOT_HELPFUL"],
+    default=[]
+)
+
+# リクエストを送信するボタン
+if st.button("Fetch Notes"):
+    # クエリパラメータの構築
+    params = {
+        "offset": offset,
+        "limit": limit,
+        "topic_ids": [],
+        "post_ids": []
+    }
+    if note_ids:
+        params["note_ids"] = note_ids.split(",")
+    if created_at_from:
+        params["created_at_from"] = created_at_from
+    if created_at_to:
+        params["created_at_to"] = created_at_to
+    if topic_ids:
+        params["topic_ids"] = [topics[topic_id] for topic_id in topic_ids]
+    if post_ids:
+        params["post_ids"] = post_ids.split(",")
+    if language:
+        params["language"] = language
+    if current_status:
+        params["current_status"] = current_status
+    
+    print(params)
+    # APIへのリクエスト
+    try:
+        response = requests.get(BASE_URL, params=params)
+        response.raise_for_status()
+        data = response.json()
+
+        # データの表示
+        if "data" in data:
+            st.write("Fetched Notes:")
+            notes = data["data"]
+
+            # データをDataFrameに変換
+            df = pd.DataFrame(notes)
+            st.dataframe(df)
+        else:
+            st.write("No data found.")
+
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error fetching data: {e}")
