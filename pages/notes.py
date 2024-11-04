@@ -1,7 +1,9 @@
 import streamlit as st
 import requests
 import pandas as pd
-from utils import fetch_topics, LANGUAGE_LIST, extract_topic_ids
+# ../utils.pyからfetch_topics, LANGUAGE_LIST, extract_topic_idsをimport
+from ..utils import fetch_topics, LANGUAGE_LIST, extract_topic_ids
+
 
 BASE_URL = "https://birdxplorer.onrender.com/api/v1/data/notes"
 
