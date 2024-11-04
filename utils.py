@@ -17,3 +17,10 @@ def fetch_topics():
 LANGUAGE_LIST = [
     "ja","en", "es",  "pt", "de", "fr", "fi", "tr", "nl", "he", "it", "fa", "ca", "ar", "el", "sv", "da", "ru", "pl", "other"
 ]
+
+# topicsを展開してトピックIDを取り出す関数を定義
+def extract_topic_ids(topic_list):
+    if topic_list is None:
+        return []
+    else:
+        return [topic['topicId'] for topic in topic_list]
