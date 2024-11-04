@@ -21,6 +21,7 @@ LANGUAGE_LIST = [
 # topicsを展開してトピックIDを取り出す関数を定義
 def extract_topic_ids(topic_list):
     if topic_list is None:
-        return []
+        return ""
     else:
-        return [topic['topicId'] for topic in topic_list]
+        topics = [topic['topicId'] for topic in topic_list]
+        return ",".join(map(str, topics))

@@ -1,8 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
-# ../utils.pyからfetch_topics, LANGUAGE_LIST, extract_topic_idsをimport
-from ..utils import fetch_topics, LANGUAGE_LIST, extract_topic_ids
+from utils import fetch_topics, LANGUAGE_LIST, extract_topic_ids
 
 
 BASE_URL = "https://birdxplorer.onrender.com/api/v1/data/notes"
@@ -64,13 +63,13 @@ if st.button("データを取得する"):
 
             # データをDataFrameに変換
             df = pd.DataFrame(notes)
-            st.dataframe(df)
 
-            # 'topics'列については、トピックIDをトピック名に変換
-            df["topics"] = df["topics"].apply(lambda x: [item['topicId'] for item in x] if isinstance(x, dict) else [])
-
-            # 
+            #TODO: 'topics'列について,Topicがわかりやすいようにしたい
+            # 'topics'列について,TopicsIdのリストに変換
             df['topics'] = df['topics'].apply(extract_topic_ids)
+ 
+            # データの表示
+            st.dataframe(df)
 
             # データのダウンロード
             st.download_button(
