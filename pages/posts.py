@@ -12,8 +12,6 @@ st.link_button("詳細はドキュメントへ", "https://birdxplorer.onrender.c
 
 topics = fetch_topics()
 
-st.header("Posts Viewer")
-
 # APIパラメータの入力
 offset = st.number_input("Posts Offset", min_value=0, value=0, step=1)
 limit = st.number_input("Posts Limit", min_value=1, max_value=1000, value=5, step=1)
